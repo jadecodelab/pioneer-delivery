@@ -36,3 +36,29 @@ def read_deliveries(filename):
 
         return deliveries
 
+def select_max_deliveries(deliveries):
+    """
+    Selects the maximum number of non-overlapping deliveries.
+
+    The algorithm sorts deliveries by finish time and greedily
+    selects the next delivery that starts after the previous one ends.
+    """
+        
+    # sort deliveries by earlies finish time
+    sorted_deliveries = sorted(deliveries, key=lambda delivery:delivery["finish"])
+
+    selected = []
+    last_finish_time = None
+
+    for delivery in sorted_deliveries:
+        # select the first delivery in the list
+        if last_finish_time is None:
+            selected.append(delivery)
+            last_finish_time = delivery["finish"]
+
+        # select the compatibile delivery
+        elif delivery["start"] >= last_finish_time:
+            selected.append(delivery)
+            last_finish_time = delivery["finish"]
+
+    return selected
