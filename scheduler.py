@@ -1,3 +1,5 @@
+import heapq
+
 def read_deliveries(filename):
     """
     Reads delivery data from a text file.
@@ -62,3 +64,41 @@ def select_max_deliveries(deliveries):
             last_finish_time = delivery["finish"]
 
     return selected
+
+def assign_drivers(deliveries):
+    """
+    Assigns every delivery to a driver using the minimum
+    possible number of drivers.
+
+    The priority queue stores:
+    (driver's current finish time, driver number)
+    """
+    # sort deliveries in order of start time
+    sorted_deliveries = sorted(deliveries, key=lambda delivery:delivery["start"])
+
+    # min heap containing each driver's finish time
+    driver_heap = []
+
+    # stores the deliveries assigned to each driver
+    driver_schedules = {}
+
+    next_driver_number = 1
+
+    for delivery in sorted_deliveries:
+        # reuse the driver who finishes earliest if available
+        if(driver_heap and driver_heap[0][0] <= delivery["start"]):
+            earliest_finish, driver_number = heapq.heappop(driver_heap)
+
+        # otherwise create a new driver
+        else:
+            driver_number = next_driver_number
+            next_driver_number += 1
+            driver_schedules[driver_number] = []
+
+        # assign delivery to selected driver
+        driver_schedules[driver_number].append(delivery)
+
+        # add driver's new finish time to the heap
+        heapq.heappush(driver_heap, (delivery["finish"], driver_number))
+
+    return driver_schedules
