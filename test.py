@@ -1,8 +1,8 @@
 import unittest
 
-from scheduler import select_max_deliveries, assign_drivers
+from scheduler import select_max_deliveries, assign_drivers, minimum_rejected
 
-# TASK A TEST
+
 def delivery(delivery_id, start, finish):
     return {
         "id": delivery_id,
@@ -10,7 +10,7 @@ def delivery(delivery_id, start, finish):
         "finish": finish
     }
 
-
+# TASK A TEST
 class TestSelectMaxDeliveries(unittest.TestCase):
 
     # Test 1: No deliveries
@@ -166,6 +166,77 @@ class TestAssignDrivers(unittest.TestCase):
         self.assertEqual(len(result), 2)
         self.check_valid_schedules(result)
 
+
+# Task C TEST
+class TestMinimumRejected(unittest.TestCase):
+
+    # Test 1
+    def test_no_deliveries(self):
+        deliveries = []
+
+        result = minimum_rejected(deliveries)
+
+        self.assertEqual(result, 0)
+
+    # Test 2
+    def test_one_delivery(self):
+        deliveries = [
+            delivery("D01", 1, 3)
+        ]
+
+        result = minimum_rejected(deliveries)
+
+        self.assertEqual(result, 0)
+
+    # Test 3
+    def test_all_compatible(self):
+        deliveries = [
+            delivery("D01", 1, 3),
+            delivery("D02", 3, 5),
+            delivery("D03", 5, 7)
+        ]
+
+        result = minimum_rejected(deliveries)
+
+        self.assertEqual(result, 0)
+
+    # Test 4
+    def test_all_overlapping(self):
+        deliveries = [
+            delivery("D01", 1, 5),
+            delivery("D02", 2, 6),
+            delivery("D03", 3, 7)
+        ]
+
+        result = minimum_rejected(deliveries)
+
+        self.assertEqual(result, 2)
+
+    # Test 5
+    def test_unsorted_deliveries(self):
+        deliveries = [
+            delivery("D01", 5, 7),
+            delivery("D02", 1, 3),
+            delivery("D03", 3, 5),
+            delivery("D04", 2, 4)
+        ]
+
+        result = minimum_rejected(deliveries)
+
+        self.assertEqual(result, 1)
+
+    # Test 6
+    def test_shared_endpoints(self):
+        deliveries = [
+            delivery("D01", 1, 2),
+            delivery("D02", 2, 3),
+            delivery("D03", 3, 4),
+            delivery("D04", 1, 3)
+        ]
+
+        result = minimum_rejected(deliveries)
+
+        self.assertEqual(result, 1)
 
 if __name__ == "__main__":
     unittest.main()
