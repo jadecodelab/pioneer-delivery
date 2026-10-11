@@ -102,3 +102,16 @@ def assign_drivers(deliveries):
         heapq.heappush(driver_heap, (delivery["finish"], driver_number))
 
     return driver_schedules
+
+def minimum_rejected(deliveries):
+    """
+    Calculates the minimum number of deliveries that must be rejected.
+
+    This function reuses the Task A algorithm to find the maximum
+    number of compatible deliveries, then subtracts that number
+    from the total number of deliveries.
+    """
+
+    selected_deliveries = select_max_deliveries(deliveries)
+
+    return len(deliveries) - len(selected_deliveries)

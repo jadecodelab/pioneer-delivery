@@ -2,7 +2,7 @@ import unittest
 
 from scheduler import select_max_deliveries, assign_drivers
 
-
+# TASK A TEST
 def delivery(delivery_id, start, finish):
     return {
         "id": delivery_id,
@@ -81,6 +81,7 @@ class TestSelectMaxDeliveries(unittest.TestCase):
         self.assertEqual(len(result), 2)
 
 
+# TASK B TEST
 class TestAssignDrivers(unittest.TestCase):
 
     def check_valid_schedules(self, schedules):
