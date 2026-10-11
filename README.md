@@ -71,3 +71,53 @@ If there are `n` total deliveries and the maximum number of compatible deliverie
 
 - Task A takes O(nlogn)
 - Total running time is O(nlogn)
+
+## Task D: When a Greedy Choice Fails
+
+Each delivery takes one unit of time. A delivery can only be scheduled at or after its ready time.
+
+The delay for a delivery is: Dj = Tj - Rj
+
+The value of a delivery is: Vj = Pj / (1 + Dj)
+
+The total value of a schedule is the sum of the values of all deliveries.
+
+The proposed greedy strategy processes deliveries in decreasing order of profit. Each delivery is scheduled in the earliest available time slot at or after its ready time.
+
+This strategy does not always produce an optimal schedule.
+
+### Counterexample
+
+| Delivery | Ready Time (Rj) | Profit (Pj) |
+| -------- | --------------: | ----------: |
+| A        |               0 |           2 |
+| B        |               0 |           3 |
+| C        |               1 |           1 |
+
+### Schedule Produced by Greedy Strategy
+
+The greedy strategy processes the deliveries in decreasing order of profit: B, A, C
+
+| Delivery | Ready Time | Profit | Scheduled Time | Delay |             Value |
+| -------- | ---------: | -----: | -------------: | ----: | ----------------: |
+| B        |          0 |      3 |              0 |     0 |   3 / (1 + 0) = 3 |
+| A        |          0 |      2 |              1 |     1 |   2 / (1 + 1) = 1 |
+| C        |          1 |      1 |              2 |     1 | 1 / (1 + 1) = 0.5 |
+
+Total Value = 3 + 1 + 0.5 = 4.5
+
+### Better Schedule
+
+Consider the following schedule: B, C, A
+
+| Delivery | Ready Time | Profit | Scheduled Time | Delay |             Value |
+| -------- | ---------: | -----: | -------------: | ----: | ----------------: |
+| B        |          0 |      3 |              0 |     0 |   3 / (1 + 0) = 3 |
+| C        |          1 |      1 |              1 |     0 |   1 / (1 + 0) = 1 |
+| A        |          0 |      2 |              2 |     2 | 2 / (1 + 2) = 2/3 |
+
+Total Value = 3 + 1 + 2/3 = 4.67
+
+This schedule produces more value than the greedy schedule.
+
+Therefore, the strategy of processing deliveries only in decreasing order of profit does not always produce an optimal schedule.
