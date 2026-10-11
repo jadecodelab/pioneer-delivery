@@ -18,16 +18,16 @@ Python
 
 ## Task A: Maximum Deliveries for One Driver
 
-### Goal:
+### Goal
 
 Find the largest number of deliveries that one driver can complete without overlapping schedules.
 
-### Algorithm:
+### Algorithm
 
 The program sorts all deliveries by their finish time. It then selects the first delivery and continues selecting a delivery whenever its start time is greater than or equal to the finish time of the previously selected delivery.
 The greedy choice is to select the delivery that finishes earliest. This leaves the most available time for the remaining deliveries.
 
-### Running Time:
+### Running Time
 
 - Sorting takes O(nlogn)
 - Scanning the sorted list takes O(n)
@@ -35,11 +35,11 @@ The greedy choice is to select the delivery that finishes earliest. This leaves 
 
 ## Task B: Minimum Number of Drivers
 
-### Goal:
+### Goal
 
 Assign every delivery to a driver while using the minimum possible number of drivers.
 
-### Algorithm:
+### Algorithm
 
 The program first sorts deliveries by their start time.
 It uses a priority queue implemented with Python's `heapq` module. The priority queue stores each driver's current finish time and driver number.
@@ -51,8 +51,23 @@ Deliveries are processed in order of start time. The algorithm checks the driver
 
 The priority queue always checks the driver who becomes available first. If that driver is still busy when a new delivery starts, then every other driver is also busy. Therefore, creating a new driver is necessary. This guarantees that no unnecessary drivers are created.
 
-### Running Time:
+### Running Time
 
 - Sorting takes O(nlogn)
 - Each delivery is added to or removed from the priority queue in O(logn)
+- Total running time is O(nlogn)
+
+## Task C: Minimum Deliveries to Reject
+
+### Relationship to Task A
+
+Task C uses the result from Task A. Task A finds the maximum number of deliveries that one driver can complete without overlapping. Task C then determines how many deliveries cannot be included in that schedule and must be rejected.
+
+### Number of Deliveries Rejected
+
+If there are `n` total deliveries and the maximum number of compatible deliveries is `k`, then: Number rejected = n - k
+
+### Running Time
+
+- Task A takes O(nlogn)
 - Total running time is O(nlogn)
