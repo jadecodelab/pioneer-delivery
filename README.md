@@ -16,15 +16,57 @@ A driver cannot handle overlapping deliveries. However, one delivery may start a
 
 Python
 
+## Project Organization
+
+```text
+pioneer-delivery/
+│
+├── main.py
+├── scheduler.py
+├── data.txt
+├── test_scheduler.py
+└── README.md
+```
+
+## Input File Format and Text Data File
+
+Each delivery is stored on one line using this format: delivery_id start_time finish_time
+
+- The delivery ID is a string.
+- Start and finish times are integers.
+- The start time must be less than the finish time.
+
+## How to Run the Program
+
+Open a terminal in the project folder and run:
+
+```test
+python main.py
+```
+
+Run all automated tests with:
+
+```test
+python -m unittest -v test.py
+```
+
+Expexted result:
+
+```test
+Ran 18 tests in 0.003s
+OK
+```
+
 ## Task A: Maximum Deliveries for One Driver
 
 ### Goal
 
 Find the largest number of deliveries that one driver can complete without overlapping schedules.
 
-### Algorithm
+### Greedy Algorithm
 
 The program sorts all deliveries by their finish time. It then selects the first delivery and continues selecting a delivery whenever its start time is greater than or equal to the finish time of the previously selected delivery.
+
 The greedy choice is to select the delivery that finishes earliest. This leaves the most available time for the remaining deliveries.
 
 ### Running Time
