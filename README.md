@@ -40,17 +40,17 @@ Each delivery is stored on one line using this format: delivery_id start_time fi
 
 Open a terminal in the project folder and run:
 
-```test
+```text
 python main.py
 ```
 
 Run all automated tests with:
 
-```test
+```text
 python -m unittest -v test.py
 ```
 
-Expexted result:
+Expected result:
 
 ```test
 Ran 18 tests in 0.003s
