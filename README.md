@@ -52,7 +52,7 @@ python -m unittest -v test.py
 
 Expected result:
 
-```test
+```text
 Ran 18 tests in 0.003s
 OK
 ```

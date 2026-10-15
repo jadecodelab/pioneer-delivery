@@ -10,7 +10,7 @@ def main():
     # Task A
     selected_deliveries = select_max_deliveries(deliveries)
 
-    print("Task A: Maximium deliveries for one driver")
+    print("Task A: Maximum deliveries for one driver")
     for delivery in selected_deliveries:
         print(f"{delivery['id']}: "
               f"{delivery['start']} - {delivery['finish']}")
