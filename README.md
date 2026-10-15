@@ -50,12 +50,44 @@ Run all automated tests with:
 python -m unittest -v test.py
 ```
 
-Expected result:
+## Test Case Results
 
-```text
-Ran 18 tests in 0.003s
-OK
-```
+The implementation was tested using all required cases from Tasks A, B, and C.
+
+### Task A: Maximum Deliveries for One Driver
+
+| Test | Delivery intervals             | Maximum selected |
+| ---- | ------------------------------ | ---------------: |
+| 1    | No deliveries                  |                0 |
+| 2    | (1, 3)                         |                1 |
+| 3    | (1, 3), (3, 5), (5, 7)         |                3 |
+| 4    | (1, 5), (2, 6), (3, 7)         |                1 |
+| 5    | (5, 7), (1, 3), (3, 5), (2, 4) |                3 |
+| 6    | (1, 4), (2, 4), (4, 6)         |                2 |
+
+### Task B: Minimum Number of Drivers
+
+| Test | Delivery intervals                     | Minimum drivers |
+| ---- | -------------------------------------- | --------------: |
+| 1    | No deliveries                          |               0 |
+| 2    | (1, 3)                                 |               1 |
+| 3    | (1, 3), (3, 5), (5, 7)                 |               1 |
+| 4    | (1, 5), (2, 6), (3, 7)                 |               3 |
+| 5    | (1, 4), (2, 5), (4, 7), (5, 8)         |               2 |
+| 6    | (5, 8), (1, 4), (2, 5), (4, 6), (6, 9) |               2 |
+
+### Task C: Minimum Deliveries Rejected
+
+| Test | Delivery intervals             | Minimum rejected |
+| ---- | ------------------------------ | ---------------: |
+| 1    | No deliveries                  |                0 |
+| 2    | (1, 3)                         |                0 |
+| 3    | (1, 3), (3, 5), (5, 7)         |                0 |
+| 4    | (1, 5), (2, 6), (3, 7)         |                2 |
+| 5    | (5, 7), (1, 3), (3, 5), (2, 4) |                1 |
+| 6    | (1, 2), (2, 3), (3, 4), (1, 3) |                1 |
+
+All 18 automated tests passed.
 
 ## Task A: Maximum Deliveries for One Driver
 
