@@ -41,13 +41,13 @@ Each delivery is stored on one line using this format: delivery_id start_time fi
 Open a terminal in the project folder and run:
 
 ```text
-python part1/main.py
+cd part1
+python main.py
 ```
 
 Run all automated tests with:
 
 ```text
-cd part1
 python -m unittest -v test.py
 ```
 
