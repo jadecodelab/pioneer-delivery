@@ -67,9 +67,13 @@ def closest_pair_recursive(sorted_by_x, sorted_by_y):
     left_result = closest_pair_recursive(left_by_x, left_by_y)
     right_result = closest_pair_recursive(right_by_x, right_by_y)
 
-    # Return the better result from the two halves
-    if left_result[2] <= right_result[2]:
-        return left_result
+    # Check whether a closer pair crosses the dividing line
+    return check_strip(
+        sorted_by_x,
+        sorted_by_y,
+        left_result,
+        right_result
+    )
 
     return right_result
 
@@ -80,6 +84,49 @@ def closest_pair(points):
     sorted_by_x, sorted_by_y = sorted_points(points)
 
     return closest_pair_recursive(sorted_by_x, sorted_by_y)
+
+def check_strip(sorted_by_x, sorted_by_y, left_result, right_result):
+    """
+    Checks whether a closer pair crosses the dividing line.
+
+    The points in the strip are already sorted by y-coordinate.
+    """
+
+    # Start with the better pair found in the two halves
+    if left_result[2] <= right_result[2]:
+        point1, point2, best_distance = left_result
+    else:
+        point1, point2, best_distance = right_result
+
+    # Use the first point in the right half as the dividing x-coordinate
+    middle = len(sorted_by_x) // 2
+    dividing_x = sorted_by_x[middle]["x"]
+
+    # Keep only points within the current best distance
+    strip = [
+        point
+        for point in sorted_by_y
+        if (point["x"] - dividing_x) ** 2 < best_distance
+    ]
+
+    # Compare each point with nearby points in y-order
+    for i in range(len(strip)):
+        for j in range(i + 1, min(i + 8, len(strip))):
+            y_difference = strip[j]["y"] - strip[i]["y"]
+
+            # If the y-distance is already too large,
+            # later points will also be too far away
+            if y_difference ** 2 >= best_distance:
+                break
+
+            distance = squared_distance(strip[i], strip[j])
+
+            if distance < best_distance:
+                point1 = strip[i]
+                point2 = strip[j]
+                best_distance = distance
+
+    return point1, point2, best_distance
 
 if __name__ == "__main__":
     points = [
