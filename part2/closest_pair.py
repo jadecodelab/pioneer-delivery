@@ -5,28 +5,78 @@ def squared_distance(point1, point2):
 # Finds the closest pair with brute force method
 def brute_force_closest(points):
     if len(points) < 2:
-        raise ValueError("Need atleast 2 points")
+        raise ValueError("At least two points are required")
 
     closest_pair = None
-    smalest_distance = float("inf")
+    smallest_distance = float("inf")
 
     for i in range(len(points)):
         for j in range(i+1, len(points)):
             distance = squared_distance(points[i],points[j])
 
-            if distance < smalest_distance:
-                smalest_distance = distance
+            if distance < smallest_distance:
+                smallest_distance = distance
                 closest_pair = (points[i], points[j])
 
-    return closest_pair[0], closest_pair[1], smalest_distance
+    return closest_pair[0], closest_pair[1], smallest_distance
+
+
+def sorted_points(points):
+    """
+    Creates two sorted versions of the points:
+    - Sorted by x-coordinate for dividing the points
+    - Sorted by y-coordinate for checking the strip
+    """
+    if len(points) < 2:
+        raise ValueError("At least two points are required")
+
+    sorted_by_x = sorted(points, key=lambda point: (point["x"]))
+    sorted_by_y = sorted(points, key=lambda point:(point["y"]))
+
+    return sorted_by_x, sorted_by_y
+
+def divide_points(sorted_by_x, sorted_by_y):
+    mid = len(sorted_by_x) // 2
+
+    left_by_x = sorted_by_x[:mid]
+    right_by_x = sorted_by_x[mid:]
+
+    left_ids = {point["id"] for point in left_by_x}
+
+    left_by_y = [point for point in sorted_by_y if point["id"] in left_ids]
+    right_by_y = [point for point in sorted_by_y if point["id"] not in left_ids]
+
+    return left_by_x, right_by_x, left_by_y, right_by_y
+
+
+
+
 
 if __name__ == "__main__":
     points = [
         {"id": "A", "x": 0, "y": 0},
-        {"id": "B", "x": 3, "y": 4}
+        {"id": "B", "x": 7, "y": 2},
+        {"id": "C", "x": 4, "y": 5},
+        {"id": "D", "x": 5, "y": 5},
+        {"id": "E", "x": 12, "y": 2},
+        {"id": "F", "x": 2, "y": 9}
     ]
 
-    point1, point2, distance = brute_force_closest(points)
+    points_by_x, points_by_y = sorted_points(points)
 
-    print(f"Closest pair: {point1['id']}, {point2['id']}")
-    print(f"Squared distance: {distance}")
+    left_by_x, right_by_x, left_by_y, right_by_y = divide_points(
+        points_by_x,
+        points_by_y
+    )
+
+    print("Sorted by x:")
+    print([point["id"] for point in points_by_x])
+
+    print("\nSorted by y:")
+    print([point["id"] for point in points_by_y])
+
+    print("\nLeft half:")
+    print([point["id"] for point in left_by_x])
+
+    print("\nRight half:")
+    print([point["id"] for point in right_by_x])
