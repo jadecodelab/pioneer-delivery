@@ -49,8 +49,37 @@ def divide_points(sorted_by_x, sorted_by_y):
     return left_by_x, right_by_x, left_by_y, right_by_y
 
 
+def closest_pair_recursive(sorted_by_x, sorted_by_y):
+    """
+    Recursively finds the closest pair inside the current set of points.
 
+    The strip check will be added in the next step.
+    """
 
+    # For small sets, compare every pair directly
+    if len(sorted_by_x) <= 3:
+        return brute_force_closest(sorted_by_x)
+
+    # Divide the points into left and right halves
+    left_by_x, right_by_x, left_by_y, right_by_y = divide_points(sorted_by_x, sorted_by_y)
+
+    # Recursively find the closest pair in each half
+    left_result = closest_pair_recursive(left_by_x, left_by_y)
+    right_result = closest_pair_recursive(right_by_x, right_by_y)
+
+    # Return the better result from the two halves
+    if left_result[2] <= right_result[2]:
+        return left_result
+
+    return right_result
+
+def closest_pair(points):
+    """
+    Starts the divide-and-conquer closest-pair algorithm.
+    """
+    sorted_by_x, sorted_by_y = sorted_points(points)
+
+    return closest_pair_recursive(sorted_by_x, sorted_by_y)
 
 if __name__ == "__main__":
     points = [
@@ -80,3 +109,9 @@ if __name__ == "__main__":
 
     print("\nRight half:")
     print([point["id"] for point in right_by_x])
+
+    point1, point2, distance = closest_pair(points)
+
+    print("\nClosest pair found inside the halves:")
+    print(f"{point1['id']} and {point2['id']}")
+    print(f"Squared distance: {distance}")
