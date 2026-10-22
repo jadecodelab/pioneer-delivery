@@ -1,125 +1,108 @@
-# Calculates the squared Euclidean distance between two points. 
-def squared_distance(point1, point2):       
-    return (point1["x"] - point2["x"])**2 + (point1["y"] - point2["y"])**2
-
-# Finds the closest pair with brute force method
-def brute_force_closest(points):
-    if len(points) < 2:
-        raise ValueError("At least two points are required")
-
-    closest_pair = None
-    smallest_distance = float("inf")
-
-    for i in range(len(points)):
-        for j in range(i+1, len(points)):
-            distance = squared_distance(points[i],points[j])
-
-            if distance < smallest_distance:
-                smallest_distance = distance
-                closest_pair = (points[i], points[j])
-
-    return closest_pair[0], closest_pair[1], smallest_distance
-
-
-def sorted_points(points):
-    """
-    Creates two sorted versions of the points:
-    - Sorted by x-coordinate for dividing the points
-    - Sorted by y-coordinate for checking the strip
-    """
-    if len(points) < 2:
-        raise ValueError("At least two points are required")
-
-    sorted_by_x = sorted(points, key=lambda point: (point["x"]))
-    sorted_by_y = sorted(points, key=lambda point:(point["y"]))
-
-    return sorted_by_x, sorted_by_y
-
-def divide_points(sorted_by_x, sorted_by_y):
-    mid = len(sorted_by_x) // 2
-
-    left_by_x = sorted_by_x[:mid]
-    right_by_x = sorted_by_x[mid:]
-
-    left_ids = {point["id"] for point in left_by_x}
-
-    left_by_y = [point for point in sorted_by_y if point["id"] in left_ids]
-    right_by_y = [point for point in sorted_by_y if point["id"] not in left_ids]
-
-    return left_by_x, right_by_x, left_by_y, right_by_y
-
-
-def closest_pair_recursive(sorted_by_x, sorted_by_y):
-    """
-    Recursively finds the closest pair inside the current set of points.
-
-    The strip check will be added in the next step.
-    """
-
-    # For small sets, compare every pair directly
-    if len(sorted_by_x) <= 3:
-        return brute_force_closest(sorted_by_x)
-
-    # Divide the points into left and right halves
-    left_by_x, right_by_x, left_by_y, right_by_y = divide_points(sorted_by_x, sorted_by_y)
-
-    # Recursively find the closest pair in each half
-    left_result = closest_pair_recursive(left_by_x, left_by_y)
-    right_result = closest_pair_recursive(right_by_x, right_by_y)
-
-    # Check whether a closer pair crosses the dividing line
-    return check_strip(
-        sorted_by_x,
-        sorted_by_y,
-        left_result,
-        right_result
-    )
-
-    return right_result
-
 def closest_pair(points):
     """
-    Starts the divide-and-conquer closest-pair algorithm.
+    Return the IDs of the closest two points and their squared distance.
     """
-    sorted_by_x, sorted_by_y = sorted_points(points)
+    if len(points) < 2:
+        raise ValueError("At least two points are required")
 
-    return closest_pair_recursive(sorted_by_x, sorted_by_y)
+    # Sort only once. The recursive function preserves both orders.
+    points_by_x = sorted(points, key=lambda point: (point["x"], point["y"]))
+    points_by_y = sorted(points, key=lambda point: (point["y"], point["x"]))
 
-def check_strip(sorted_by_x, sorted_by_y, left_result, right_result):
+    point1, point2, distance_squared = _closest_recursive(
+        points_by_x,
+        points_by_y
+    )
+
+    return point1["id"], point2["id"], distance_squared
+
+
+def _closest_recursive(points_by_x, points_by_y):
     """
-    Checks whether a closer pair crosses the dividing line.
-
-    The points in the strip are already sorted by y-coordinate.
+    Find the closest pair using divide and conquer.
     """
 
-    # Start with the better pair found in the two halves
+    # Base case: directly compare groups of two or three points.
+    if len(points_by_x) <= 3:
+        return _brute_force(points_by_x)
+
+    # Divide the points into left and right halves.
+    left_x, right_x, left_y, right_y = _divide_points(
+        points_by_x,
+        points_by_y
+    )
+
+    # Recursively solve each half.
+    left_result = _closest_recursive(left_x, left_y)
+    right_result = _closest_recursive(right_x, right_y)
+
+    # Start with the better result from the two halves.
     if left_result[2] <= right_result[2]:
-        point1, point2, best_distance = left_result
+        best_result = left_result
     else:
-        point1, point2, best_distance = right_result
+        best_result = right_result
 
-    # Use the first point in the right half as the dividing x-coordinate
-    middle = len(sorted_by_x) // 2
-    dividing_x = sorted_by_x[middle]["x"]
+    # Check whether a closer pair crosses the dividing line.
+    dividing_x = right_x[0]["x"]
 
-    # Keep only points within the current best distance
+    return _check_strip(
+        points_by_y,
+        dividing_x,
+        best_result
+    )
+
+
+def _divide_points(points_by_x, points_by_y):
+    """
+    Divide both sorted lists into matching left and right halves.
+    """
+    middle = len(points_by_x) // 2
+
+    left_x = points_by_x[:middle]
+    right_x = points_by_x[middle:]
+
+    # Use IDs because points with the same x-coordinate
+    # might be placed in different halves.
+    left_ids = {point["id"] for point in left_x}
+
+    left_y = [
+        point for point in points_by_y
+        if point["id"] in left_ids
+    ]
+
+    right_y = [
+        point for point in points_by_y
+        if point["id"] not in left_ids
+    ]
+
+    return left_x, right_x, left_y, right_y
+
+
+def _check_strip(points_by_y, dividing_x, best_result):
+    """
+    Check for a closer pair crossing the dividing line.
+    """
+    point1, point2, best_distance = best_result
+
+    # Keep only points close enough to the dividing line.
     strip = [
         point
-        for point in sorted_by_y
+        for point in points_by_y
         if (point["x"] - dividing_x) ** 2 < best_distance
     ]
 
-    # Compare each point with nearby points in y-order
+    # The strip is already sorted by y-coordinate.
     for i in range(len(strip)):
+
+        # Only the next seven points can possibly be closer.
         for j in range(i + 1, min(i + 8, len(strip))):
             y_difference = strip[j]["y"] - strip[i]["y"]
 
-            # If the y-distance is already too large,
-            # later points will also be too far away
-            if y_difference ** 2 >= best_distance:
+            # Later points will have an even larger y-difference.
+            if y_difference**2 >= best_distance:
                 break
 
-            distance = squared_distance(strip[i], strip[j])
+            distance = _squared_distance(strip[i], strip[j])
 
             if distance < best_distance:
                 point1 = strip[i]
@@ -127,6 +110,35 @@ def check_strip(sorted_by_x, sorted_by_y, left_result, right_result):
                 best_distance = distance
 
     return point1, point2, best_distance
+
+
+def _brute_force(points):
+    """
+    Compare every pair in a small group.
+    """
+    best_pair = None
+    best_distance = float("inf")
+
+    for i in range(len(points)):
+        for j in range(i + 1, len(points)):
+            distance = _squared_distance(points[i], points[j])
+
+            if distance < best_distance:
+                best_pair = (points[i], points[j])
+                best_distance = distance
+
+    return best_pair[0], best_pair[1], best_distance
+
+
+def _squared_distance(point1, point2):
+    """
+    Calculate squared Euclidean distance.
+    """
+    x_difference = point1["x"] - point2["x"]
+    y_difference = point1["y"] - point2["y"]
+
+    return x_difference**2 + y_difference**2
+
 
 if __name__ == "__main__":
     points = [
@@ -138,27 +150,7 @@ if __name__ == "__main__":
         {"id": "F", "x": 2, "y": 9}
     ]
 
-    points_by_x, points_by_y = sorted_points(points)
+    id1, id2, distance_squared = closest_pair(points)
 
-    left_by_x, right_by_x, left_by_y, right_by_y = divide_points(
-        points_by_x,
-        points_by_y
-    )
-
-    print("Sorted by x:")
-    print([point["id"] for point in points_by_x])
-
-    print("\nSorted by y:")
-    print([point["id"] for point in points_by_y])
-
-    print("\nLeft half:")
-    print([point["id"] for point in left_by_x])
-
-    print("\nRight half:")
-    print([point["id"] for point in right_by_x])
-
-    point1, point2, distance = closest_pair(points)
-
-    print("\nClosest pair found inside the halves:")
-    print(f"{point1['id']} and {point2['id']}")
-    print(f"Squared distance: {distance}")
+    print(f"Closest pair: {id1} and {id2}")
+    print(f"Squared distance: {distance_squared}")
