@@ -4,14 +4,6 @@ from closest_pair import closest_pair
 
 
 class TestClosestPair(unittest.TestCase):
-
-    def point_ids(self, point1, point2):
-        """
-        Returns the IDs as a set so the pair can be checked
-        without depending on the order.
-        """
-        return {point1["id"], point2["id"]}
-
     # Test A1
     def test_a1_two_points(self):
         points = [
@@ -19,9 +11,9 @@ class TestClosestPair(unittest.TestCase):
             {"id": "B", "x": 3, "y": 4}
         ]
 
-        point1, point2, distance = closest_pair(points)
+        id1, id2, distance = closest_pair(points)
 
-        self.assertEqual(self.point_ids(point1, point2), {"A", "B"})
+        self.assertEqual({id1, id2}, {"A", "B"})
         self.assertEqual(distance, 25)
 
     # Test A2
@@ -35,9 +27,9 @@ class TestClosestPair(unittest.TestCase):
             {"id": "F", "x": 2, "y": 9}
         ]
 
-        point1, point2, distance = closest_pair(points)
+        id1, id2, distance = closest_pair(points)
 
-        self.assertEqual(self.point_ids(point1, point2), {"C", "D"})
+        self.assertEqual({id1, id2}, {"C", "D"})
         self.assertEqual(distance, 1)
 
     # Test A3
@@ -49,9 +41,9 @@ class TestClosestPair(unittest.TestCase):
             {"id": "D", "x": 2, "y": 15}
         ]
 
-        point1, point2, distance = closest_pair(points)
+        id1, id2, distance = closest_pair(points)
 
-        self.assertEqual(self.point_ids(point1, point2), {"A", "C"})
+        self.assertEqual({id1, id2}, {"A", "C"})
         self.assertEqual(distance, 16)
 
     # Test A4
@@ -62,9 +54,9 @@ class TestClosestPair(unittest.TestCase):
             {"id": "C", "x": 6, "y": 8}
         ]
 
-        point1, point2, distance = closest_pair(points)
+        id1, id2, distance = closest_pair(points)
 
-        self.assertEqual(self.point_ids(point1, point2), {"A", "B"})
+        self.assertEqual({id1, id2}, {"A", "B"})
         self.assertEqual(distance, 9)
 
     # Additional test: multiple closest pairs
@@ -76,14 +68,20 @@ class TestClosestPair(unittest.TestCase):
             {"id": "D", "x": 1, "y": 1}
         ]
 
-        point1, point2, distance = closest_pair(points)
+        id1, id2, distance = closest_pair(points)
 
-        valid_ids = {"A", "B", "C", "D"}
-
+        self.assertIn({id1, id2}, [
+            {"A", "B"},
+            {"A", "C"},
+            {"B", "D"},
+            {"C", "D"}
+        ])
         self.assertEqual(distance, 1)
-        self.assertIn(point1["id"], valid_ids)
-        self.assertIn(point2["id"], valid_ids)
-        self.assertNotEqual(point1["id"], point2["id"])
+
+    # Additional test: invalid input
+    def test_requires_at_least_two_points(self):
+        with self.assertRaisesRegex(ValueError, "At least two points"):
+            closest_pair([{"id": "A", "x": 0, "y": 0}])
 
 
 if __name__ == "__main__":
