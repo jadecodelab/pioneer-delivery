@@ -45,6 +45,20 @@ class TestDispatchInversions(unittest.TestCase):
             0
         )
 
+    # Large-count check
+    def test_large_reversed_order(self):
+        n = 100_000
+
+        planned = list(range(1, n + 1))
+        actual = planned[::-1]
+
+        expected = n * (n - 1) // 2
+
+        self.assertEqual(
+            count_dispatch_inversions(planned, actual),
+            expected
+        )
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

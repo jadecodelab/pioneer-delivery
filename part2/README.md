@@ -194,12 +194,13 @@ Run the Task B tests with:
 python -m unittest -v test_task_B.py
 ```
 
-The test suite includes all required cases B1 through B4:
+The test suite includes:
 
 - Two inversions
 - Identical planned and actual orders
 - Completely reversed order
 - A single delivery ID
+- 100,000-ID reversed-order
 
 Run all Task A and Task B tests with:
 
