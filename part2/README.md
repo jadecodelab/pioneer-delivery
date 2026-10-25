@@ -202,7 +202,86 @@ The test suite includes:
 - A single delivery ID
 - 100,000-ID reversed-order
 
-Run all Task A and Task B tests with:
+# Task C: Selecting a Delivery-Time Threshold
+
+## Goal
+
+Task C finds the kth-smallest estimated delivery time without sorting the
+entire input. The implementation uses the deterministic median-of-medians
+selection algorithm.
+
+## Input Format
+
+The `select_kth_delivery_time` function accepts a list of nonnegative integer
+delivery times and a 1-based rank `k`:
+
+```python
+delivery_times = [18, 4, 29, 11, 4, 16, 35, 9, 22]
+k = 5
+```
+
+Input assumptions:
+
+- The list contains at least one delivery time.
+- Every delivery time is a nonnegative integer.
+- Repeated values are allowed and count as separate positions.
+- `k` is between `1` and the number of delivery times.
+
+If `k` is outside its valid range, the function raises a `ValueError`.
+
+## Output Format
+
+The function returns the kth-smallest delivery time. For the example above,
+the result is: `16`
+
+## Algorithm
+
+The program uses deterministic median-of-medians selection.
+
+1. Sort and directly select from base cases containing at most five values.
+2. Divide a larger input into groups of at most five values.
+3. Sort each small group and collect its median.
+4. Recursively select the median of those medians as the pivot.
+5. Partition the input into values less than, equal to, and greater than the
+   pivot.
+6. Recurse only into the partition containing rank `k`.
+7. If the answer is in the greater partition, subtract the sizes of the less
+   and equal partitions from `k`.
+8. Return the pivot when `k` falls within the equal partition.
+
+## Complexity
+
+- Time complexity: `O(n)`
+
+## Files
+
+- `delivery_threshold.py`: Task C implementation and demonstration input
+- `test_task_C.py`: Task C automated unit tests
+
+## Running the Program
+
+After changing to the `part2` directory, run:
+
+```text
+python delivery_threshold.py
+```
+
+## Running the Tests
+
+Run the Task C tests with:
+
+```text
+python -m unittest -v test_task_C.py
+```
+
+The test suite includes:
+
+- Required cases C1 through C5
+- Already sorted input
+- Reverse-sorted input
+- A larger input containing many duplicate values
+
+Run all Task A, Task B, and Task C tests with:
 
 ```text
 python -m unittest discover -v
