@@ -30,11 +30,31 @@ def maximum_removals(source, pattern, target_indices):
             if(j > 0 and source_character == pattern[j - 1] and dp[i - 1][j - 1] != float("-inf")):
                 dp[i][j] = max(dp[i][j], dp[i - 1][j - 1])
 
-    print("DP table:")
-    for row in dp:
-        print(row)
+    removed_indices = []
 
-    return dp[n][m], []
+    i = n
+    j = m
+
+    while i > 0:
+        source_index = i - 1
+
+        # check whether this character was deleted
+        if(source_index in target_indices and dp[i][j] == dp[i - 1][j] + 1):
+            removed_indices.append(source_index)
+            i -= 1
+
+        # check whether this character matched the pattern
+        elif(j > 0 and source[source_index] == pattern[j - 1] and dp[i][j] == dp[i - 1][j - 1]):
+            i -= 1
+            j -= 1
+
+        # otherwise, the character was kept without matching
+        else:
+            i -= 1
+
+    removed_indices.reverse()
+    
+    return dp[n][m], removed_indices
 
 if __name__ == "__main__":
     source = "abbaa"
