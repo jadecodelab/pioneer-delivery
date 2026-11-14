@@ -31,6 +31,8 @@ def maximum_profit_schedule(deliveries):
         maximum_profit: the highest possible total profit
         selected_ids: IDs of the selected deliveries in chronological order
     """
+    if not deliveries:
+        return 0, []
 
     # Sort deliveries by nondecreasing finish time
     sorted_deliveries = sorted(deliveries, key=lambda delivery: (
@@ -43,13 +45,30 @@ def maximum_profit_schedule(deliveries):
         predecessor = find_predecessor(sorted_deliveries, i)
         predecessors.append(predecessor)
 
+    # DP[0] means no deliveries have been considered.
+    dp = [0] * (len(sorted_deliveries) + 1)
+
+    for i in range(1, len(sorted_deliveries) + 1):
+        current_delivery = sorted_deliveries[i - 1]
+
+        skip_current = dp[i - 1]
+
+        select_current = (current_delivery["profit"] + dp[predecessors[i]])
+
+        dp[i] = max(skip_current, select_current)
+
     print("Sorted deliveries:")
     print([delivery["id"] for delivery in sorted_deliveries])
 
     print("Predecessors:")
     print(predecessors)
 
-    return 0, []
+    print("DP table:")
+    print(dp)
+
+    return dp[-1], []
+
+   
 
 if __name__ == "__main__":
     deliveries = [
