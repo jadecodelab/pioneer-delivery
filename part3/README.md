@@ -146,3 +146,72 @@ The test suite includes:
 - An item that exactly fits the budget
 - Empty delivery input
 - An independent brute-force comparison for a small input
+
+## Task C: Event Log Cleanup
+
+### Purpose
+
+Task C removes the maximum number of allowed characters from an event-log string while keeping a required pattern as a subsequence.
+
+A subsequence keeps characters in the same order, but the characters do not need to be next to each other.
+
+### Input Format
+
+The function receives:
+
+```python
+source = "abbaa"
+pattern = "aba"
+target_indices = [0, 1, 2]
+```
+
+### Output
+
+maximum number of removals
+
+original indices that were removed
+
+### Algorithm
+
+The algorithm uses a two-dimensional bottom-up DP table.
+
+DP[i][j] represents the maximum number of deletions after processing the first i characters of source while matching the first j characters of pattern.
+
+For each source character, the algorithm considers three choices:
+
+1. Keep the character without matching it.
+2. Delete it if its original index is in target_indices.
+3. Keep it to match the next character in pattern.
+   Impossible partial matches are represented using negative infinity.
+
+After filling the table, the algorithm works backward from DP[n][m] to recover the original indices that were deleted.
+
+### Complexity
+
+Time: O(nm)
+
+Space: O(nm)
+
+n is the length of source
+m is the length of pattern
+
+### Running the Program
+
+From the part3 folder, run:
+
+```python
+python event_log_cleanup.py
+```
+
+### Running the Tests
+
+```python
+python -m unittest -v test_task_C.py
+```
+
+The test suite includes:
+
+- The four assignment examples
+- No allowed deletions
+- Repeated characters
+- Verification that the pattern remains a subsequence
