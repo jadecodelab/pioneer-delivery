@@ -67,3 +67,82 @@ The test suite contains four tests:
 - Empty delivery input
 - Deliveries touching at an endpoint
 - Overlapping deliveries
+
+## Task B: Delivery Selection with a Fuel Budget
+
+### Purpose
+
+Task B selects deliveries with the maximum total profit while staying within a limited fuel budget. Each delivery can be selected at most once.
+
+This is the 0/1 knapsack problem.
+
+### Input Format
+
+Each delivery is represented as:
+
+```python
+{
+    "id": "P",
+    "fuel": 4,
+    "profit": 20
+}
+```
+
+### Output Format
+
+```
+maximum profit
+selected delivery IDs
+total fuel used
+```
+
+### Algorithm
+
+The algorithm uses a two-dimensional bottom-up DP table.
+
+DP[i][b] represents the maximum profit obtainable using the first i deliveries with a fuel budget of b.
+
+For each delivery, the algorithm compares:
+
+- Skipping the delivery
+- Selecting the delivery, if enough fuel is available
+
+The recurrence is:
+DP[i][b] = max(
+DP[i - 1][b],
+profit[i] + DP[i - 1]b - fuel[i]]
+)
+
+The previous row is used when selecting a delivery, so no delivery can be selected more than once.
+
+After filling the table, the algorithm works backward through it to recover the selected delivery IDs and total fuel used.
+
+### Complexity
+
+Time: O(nB)
+
+Space: O(nB)
+
+n is the number of deliveries and B is the numerical fuel budget.
+
+### Running the Program
+
+From the part3 folder, run:
+
+```python
+python knapsack.py
+```
+
+### Running the Tests
+
+```python
+python -m unittest -v test_task_B.py
+```
+
+The test suite includes:
+
+- The assignment example
+- Zero fuel budget
+- An item that exactly fits the budget
+- Empty delivery input
+- An independent brute-force comparison for a small input
