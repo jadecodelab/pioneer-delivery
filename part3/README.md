@@ -1,3 +1,14 @@
+# Pioneer Delivery Algorithm Portfolio Part III
+
+## Github:
+
+https://github.com/jadecodelab/pioneer-delivery
+
+## Programming Language and Dependencies
+
+- Python 3
+- No third-party packages are required
+
 ## Task A: Maximum-Profit Delivery Scheduling
 
 ### Purpose
@@ -215,3 +226,9 @@ The test suite includes:
 - No allowed deletions
 - Repeated characters
 - Verification that the pattern remains a subsequence
+
+## Generative AI Acknowledgment
+
+ChatGPT was used as a learning and development assistant during this project. It helped explain the dynamic programming concepts, clarify the DP states and recurrences, suggest implementation approaches, and assist with writing documentation and test cases.
+
+I independently reviewed and verified the implementation. I manually checked the algorithms using the assignment examples and edge cases, and I ran the automated test suites for Tasks A–C. All 15 tests passed successfully. I also verified that the returned schedules respect compatibility rules, the selected deliveries stay within the fuel budget, and the required pattern remains a subsequence after Task C deletions.
