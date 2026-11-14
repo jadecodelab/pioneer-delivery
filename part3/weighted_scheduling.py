@@ -1,3 +1,30 @@
+def find_predecessor(sorted_deliveries, delivery_index):
+    """
+    Finds the number of the last delivery that is compatible
+    with the delivery at delivery_index.
+
+    Returns 0 if no compatible delivery exists.
+    """
+
+    current_delivery = sorted_deliveries[delivery_index]
+    start_time = current_delivery["start"]
+
+    low = 0
+    high = delivery_index - 1
+    predecessor = 0
+
+    while low <= high:
+        middle = (low + high) // 2
+
+        if sorted_deliveries[middle]["finish"] <= start_time:
+            # this delivery is compatible. Save it and continue searching
+            predecessor = middle + 1
+            low = middle + 1
+        else:
+            high = middle - 1
+
+    return predecessor
+
 def maximum_profit_schedule(deliveries):
     """
     Returns:
@@ -10,7 +37,19 @@ def maximum_profit_schedule(deliveries):
         delivery["finish"], delivery["start"], delivery["id"]
     ))
 
-    print(sorted_deliveries)
+    predecessors = [0]
+
+    for i in range(len(sorted_deliveries)):
+        predecessor = find_predecessor(sorted_deliveries, i)
+        predecessors.append(predecessor)
+
+    print("Sorted deliveries:")
+    print([delivery["id"] for delivery in sorted_deliveries])
+
+    print("Predecessors:")
+    print(predecessors)
+
+    return 0, []
 
 if __name__ == "__main__":
     deliveries = [
