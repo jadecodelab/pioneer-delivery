@@ -57,16 +57,21 @@ def maximum_profit_schedule(deliveries):
 
         dp[i] = max(skip_current, select_current)
 
-    print("Sorted deliveries:")
-    print([delivery["id"] for delivery in sorted_deliveries])
+    selected_ids = []
+    i = len(sorted_deliveries)
 
-    print("Predecessors:")
-    print(predecessors)
+    while i > 0:
+        if dp[i] == dp[i - 1]:
+            # current delivery was skipped
+            i -= 1
+        else:
+            selected_ids.append(sorted_deliveries[i - 1]["id"])
+            i = predecessors[i]
 
-    print("DP table:")
-    print(dp)
+    # we reconstructed backward, so reverse the ids
+    selected_ids.reverse()
 
-    return dp[-1], []
+    return dp[-1], selected_ids
 
    
 
