@@ -32,9 +32,11 @@ Each delivery is represented as a dictionary:
 
 ### Output Format
 
-The function returns:
-maximum profit,
-selected delivery IDs in chronological order
+```
+Returns:
+    maximum_profit: the highest possible total profit
+    selected_ids: IDs of the selected deliveries in chronological order
+```
 
 ### Algorithm
 
@@ -48,9 +50,23 @@ The algorithm uses weighted interval scheduling with dynamic programming.
    - Selecting the delivery and adding the best compatible profit
 5. Trace backward through the DP table to recover the selected delivery IDs.
 
+DP[i] is the maximum profit obtainable using the first i deliveries in finish-time order.
+
+The base case is: DP[0] = 0 (no deliveries considered)
+
 The recurrence is: DP[i] = max(DP[i - 1], profit[i] + DP[p(i)])
 
-p(i) is the last delivery compatible with delivery i
+p(i) is the last delivery compatible with delivery i (p(i) = 0 if none exists).
+
+The table is filled bottom-up for i = 1 to n. Each entry DP[i] depends only on DP[i - 1] and DP[p(i)], which are already computed because p(i) < i.
+
+### Why the Greedy Method Fails
+
+The greedy algorithm from Part I always picks the delivery that finishes earliest. This maximizes the number of deliveries, but it ignores profit.
+
+In the assignment example, greedy selects A, C, E for a total profit of 50 + 40 + 50 = 140. Choosing A first rules out B (profit 60) because they overlap. The optimal schedule B, D, F earns 60 + 70 + 50 = 180.
+
+When profits differ, one high-profit delivery can be worth more than several low-profit ones. Greedy cannot see this trade-off, while dynamic programming compares skipping and selecting every delivery.
 
 ### Complexity
 

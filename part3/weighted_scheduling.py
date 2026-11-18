@@ -18,6 +18,8 @@ def find_predecessor(sorted_deliveries, delivery_index):
 
         if sorted_deliveries[middle]["finish"] <= start_time:
             # this delivery is compatible. Save it and continue searching
+            # p(i) is 1-based: list index middle is delivery number middle + 1
+            # (0 is reserved for "no compatible delivery")
             predecessor = middle + 1
             low = middle + 1
         else:
@@ -39,6 +41,7 @@ def maximum_profit_schedule(deliveries):
         delivery["finish"], delivery["start"], delivery["id"]
     ))
 
+    # predecessors[0] is an unused placeholder so that predecessors[i] lines up with dp[i]
     predecessors = [0]
 
     for i in range(len(sorted_deliveries)):
@@ -73,16 +76,15 @@ def maximum_profit_schedule(deliveries):
 
     return dp[-1], selected_ids
 
-   
 
 if __name__ == "__main__":
     deliveries = [
-    {"id": "A", "start": 0, "finish": 3, "profit": 50},
-    {"id": "B", "start": 1, "finish": 4, "profit": 60},
-    {"id": "C", "start": 3, "finish": 5, "profit": 40},
-    {"id": "D", "start": 4, "finish": 7, "profit": 70},
-    {"id": "E", "start": 5, "finish": 8, "profit": 50},
-    {"id": "F", "start": 7, "finish": 9, "profit": 50},
+        {"id": "A", "start": 0, "finish": 3, "profit": 50},
+        {"id": "B", "start": 1, "finish": 4, "profit": 60},
+        {"id": "C", "start": 3, "finish": 5, "profit": 40},
+        {"id": "D", "start": 4, "finish": 7, "profit": 70},
+        {"id": "E", "start": 5, "finish": 8, "profit": 50},
+        {"id": "F", "start": 7, "finish": 9, "profit": 50},
     ]
 
     profit, selected_ids = maximum_profit_schedule(deliveries)
