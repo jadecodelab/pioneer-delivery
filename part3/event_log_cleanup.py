@@ -21,7 +21,7 @@ def maximum_removals(source, pattern, target_indices):
             # keep this character without matching
             dp[i][j] = dp[i - 1][j]
 
-            # delete this character to match the pattern
+            # delete this character (only if its index is in target_indices)
             if source_index in target_indices:
                 if dp[i - 1][j] != float("-inf"):
                     dp[i][j] = max(dp[i][j], dp[i - 1][j] + 1)
