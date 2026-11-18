@@ -23,6 +23,27 @@ def brute_force_best_profit(deliveries, budget):
 
 class TestKnapsack(unittest.TestCase):
 
+    def assert_valid_selection(
+        self, deliveries, budget, profit, selected_ids, total_fuel
+    ):
+        """Check that the returned selection is consistent and within budget."""
+        by_id = {delivery["id"]: delivery for delivery in deliveries}
+        selected = [by_id[delivery_id] for delivery_id in selected_ids]
+
+        # no delivery is selected twice
+        self.assertEqual(len(selected_ids), len(set(selected_ids)))
+
+        # returned totals match the selected deliveries
+        self.assertEqual(
+            sum(delivery["fuel"] for delivery in selected), total_fuel
+        )
+        self.assertEqual(
+            sum(delivery["profit"] for delivery in selected), profit
+        )
+
+        # the fuel budget is respected
+        self.assertLessEqual(total_fuel, budget)
+
     def test_assignment_example(self):
         deliveries = [
             {"id": "P", "fuel": 4, "profit": 20},
@@ -39,6 +60,9 @@ class TestKnapsack(unittest.TestCase):
         self.assertEqual(profit, 53)
         self.assertEqual(selected_ids, ["Q", "R", "S"])
         self.assertEqual(total_fuel, 10)
+        self.assert_valid_selection(
+            deliveries, 10, profit, selected_ids, total_fuel
+        )
 
     def test_zero_budget(self):
         deliveries = [
@@ -53,6 +77,9 @@ class TestKnapsack(unittest.TestCase):
         self.assertEqual(profit, 0)
         self.assertEqual(selected_ids, [])
         self.assertEqual(total_fuel, 0)
+        self.assert_valid_selection(
+            deliveries, 0, profit, selected_ids, total_fuel
+        )
 
     def test_item_exactly_fits_budget(self):
         deliveries = [
@@ -67,6 +94,9 @@ class TestKnapsack(unittest.TestCase):
         self.assertEqual(profit, 25)
         self.assertEqual(selected_ids, ["A"])
         self.assertEqual(total_fuel, 5)
+        self.assert_valid_selection(
+            deliveries, 5, profit, selected_ids, total_fuel
+        )
 
     def test_empty_delivery_list(self):
         profit, selected_ids, total_fuel = (
@@ -76,6 +106,9 @@ class TestKnapsack(unittest.TestCase):
         self.assertEqual(profit, 0)
         self.assertEqual(selected_ids, [])
         self.assertEqual(total_fuel, 0)
+        self.assert_valid_selection(
+            [], 10, profit, selected_ids, total_fuel
+        )
 
     def test_dp_matches_brute_force(self):
         deliveries = [
@@ -96,7 +129,9 @@ class TestKnapsack(unittest.TestCase):
         )
 
         self.assertEqual(actual_profit, expected_profit)
-        self.assertLessEqual(total_fuel, budget)   
+        self.assert_valid_selection(
+            deliveries, budget, actual_profit, selected_ids, total_fuel
+        )
 
 if __name__ == "__main__":
     unittest.main()
