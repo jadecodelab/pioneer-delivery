@@ -129,20 +129,28 @@ The algorithm uses a two-dimensional bottom-up DP table.
 
 DP[i][b] represents the maximum profit obtainable using the first i deliveries with a fuel budget of b.
 
+The base cases are:
+
+- DP[0][b] = 0 (no deliveries available)
+- DP[i][0] = 0 (no fuel available)
+
 For each delivery, the algorithm compares:
 
 - Skipping the delivery
 - Selecting the delivery, if enough fuel is available
 
 The recurrence is:
-DP[i][b] = max(
-DP[i - 1][b],
-profit[i] + DP[i - 1]b - fuel[i]]
-)
+
+```
+DP[i][b] = DP[i - 1][b]                                           if fuel[i] > b
+DP[i][b] = max(DP[i - 1][b], profit[i] + DP[i - 1][b - fuel[i]])  otherwise
+```
 
 The previous row is used when selecting a delivery, so no delivery can be selected more than once.
 
-After filling the table, the algorithm works backward through it to recover the selected delivery IDs and total fuel used.
+The table is filled row by row for i = 1 to n, and within each row for b = 0 to B. Each entry uses only row i - 1, which is already complete.
+
+After filling the table, the algorithm works backward through it to recover the selected delivery IDs and total fuel used. Starting from DP[n][B], if a value equals the value in the row above, the delivery was skipped. Otherwise, it was selected and its fuel cost is subtracted from the remaining budget.
 
 ### Complexity
 
@@ -151,6 +159,8 @@ Time: O(nB)
 Space: O(nB)
 
 n is the number of deliveries and B is the numerical fuel budget.
+
+The table has (n + 1)(B + 1) entries, and each is filled in constant time. The running time depends on the numerical value of B, not on how many digits it takes to write B. Doubling B doubles the running time, even though the input grows by only one bit. This makes O(nB) pseudo-polynomial: it is polynomial in the value of B, but not in the size of the input.
 
 ### Running the Program
 
@@ -173,6 +183,8 @@ The test suite includes:
 - An item that exactly fits the budget
 - Empty delivery input
 - An independent brute-force comparison for a small input
+
+Every test also verifies that no delivery is selected twice, that the returned fuel and profit match the selected deliveries, and that the total fuel stays within the budget.
 
 ## Task C: Event Log Cleanup
 
