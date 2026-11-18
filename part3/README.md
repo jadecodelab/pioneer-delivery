@@ -204,11 +204,13 @@ pattern = "aba"
 target_indices = [0, 1, 2]
 ```
 
-### Output
+### Output Format
 
-maximum number of removals
-
-original indices that were removed
+```
+Returns:
+    removal_count: maximum number of removals
+    removed_indices: original indices that were removed, in increasing order
+```
 
 ### Algorithm
 
@@ -216,14 +218,39 @@ The algorithm uses a two-dimensional bottom-up DP table.
 
 DP[i][j] represents the maximum number of deletions after processing the first i characters of source while matching the first j characters of pattern.
 
+The base cases are:
+
+- DP[0][0] = 0 (nothing processed, nothing matched)
+- DP[0][j] = negative infinity for j > 0, because part of the pattern cannot be matched without processing any source characters
+
+Impossible partial matches are represented using negative infinity, so they are never chosen by max.
+
 For each source character, the algorithm considers three choices:
 
 1. Keep the character without matching it.
 2. Delete it if its original index is in target_indices.
 3. Keep it to match the next character in pattern.
-   Impossible partial matches are represented using negative infinity.
 
-After filling the table, the algorithm works backward from DP[n][m] to recover the original indices that were deleted.
+The recurrence is:
+
+```
+DP[i][j] = max of:
+    DP[i - 1][j]          keep source[i - 1] without matching it
+    DP[i - 1][j] + 1      delete it, only if i - 1 is in target_indices
+    DP[i - 1][j - 1]      match it, only if j > 0 and source[i - 1] == pattern[j - 1]
+```
+
+The table is filled row by row for i = 1 to n, and within each row for j = 0 to m. Each entry uses only row i - 1, which is already complete.
+
+The final answer is DP[n][m].
+
+After filling the table, the algorithm works backward from DP[n][m] to recover the original indices that were deleted:
+
+1. If the character's index is in target_indices and DP[i][j] = DP[i - 1][j] + 1, it was deleted. Record its index and move to row i - 1.
+2. Otherwise, if it matches pattern[j - 1] and DP[i][j] = DP[i - 1][j - 1], it was used in the match. Move to row i - 1 and column j - 1.
+3. Otherwise, it was kept without matching. Move to row i - 1.
+
+The recorded indices are reversed at the end so they appear in increasing order.
 
 ### Complexity
 
@@ -250,10 +277,11 @@ python -m unittest -v test_task_C.py
 
 The test suite includes:
 
-- The four assignment examples
+- The four assignment examples (Example 2 removes every eligible character, and Example 3 allows zero removals)
 - No allowed deletions
-- Repeated characters
-- Verification that the pattern remains a subsequence
+- Repeated characters with multiple possible alignments
+
+Every test also verifies that the removal count matches the number of removed indices, no index is repeated, every removed index is in target_indices, and the pattern remains a subsequence after removal.
 
 ## Generative AI Acknowledgment
 
